@@ -642,8 +642,14 @@ function markFieldsAroundShip(shipLocationSet) {
       for(let i of [1, -1, 11, -11, 12, -12, 10, -10])
         if(elementId + i <= 1120)
           if(allComputerFields[elementId + i - 1000].getAttribute('class') == 'field') {
+
             allComputerFields[elementId + i - 1000].setAttribute('class', 'miss')
             allComputerFields[elementId + i - 1000].removeAttribute('onclick');
+
+            const pointDiv = document.createElement('div');
+            pointDiv.className = 'point';
+            
+            allComputerFields[elementId + i - 1000].appendChild(pointDiv);
           }
         
   //we have to check if we are looking on computer board or player board
@@ -652,10 +658,15 @@ function markFieldsAroundShip(shipLocationSet) {
       for(let i of [1, -1, 11, -11, 12, -12, 10, -10])
         if(elementId + i <= 120)
           if(allFields[elementId + i].getAttribute('class') == 'field') {
-            allFields[elementId + i].setAttribute('class', 'miss');
 
             const index = possibleShotsForComputer.indexOf(elementId + i);
             possibleShotsForComputer.splice(index, 1);
+
+            const pointDiv = document.createElement('div');
+            pointDiv.className = 'point';
+            
+            allFields[elementId + i].appendChild(pointDiv);
+            allFields[elementId + i].setAttribute('class', 'miss');
           }
 
 }
