@@ -295,6 +295,8 @@ function startGame(ev) {
   }
 
   randomSetComputerShips();
+  console.log(computerShipsLocation);
+  console.log(" ");
 }
 
 function randomSetComputerShips() {
@@ -531,6 +533,7 @@ function shoot(ev) {
 
     fieldsHitByPlayer.add(shotDownFieldId)
     checkIfShipIsSank(shotDownFieldId, computerShipsLocation, fieldsHitByPlayer);
+    checkEndGame();
   }
 
   else {
@@ -559,6 +562,8 @@ async function computerShot() {
     fieldsHitByComputer.add(shotDownFieldId);
     checkIfShipIsSank(shotDownFieldId, playerShipsLocation, fieldsHitByComputer);
 
+    checkEndGame();
+
     await sleep(300);
     computerShot();
   }
@@ -577,7 +582,7 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
   let sanken = 1
   let sankenShip = new Set([fieldId]);
 
-  for(let i = 0; i < 3; i++) {
+  for(let i = 1; i < 4; i++) {
 
     if(shipBoard.has(fieldId + i)) {
       if(! hitShipsBoard.has(fieldId + i))
@@ -590,7 +595,7 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
       break;
   }
 
-  for(let i = 0; i < 3; i++) {
+  for(let i = 1; i < 4; i++) {
 
     if(shipBoard.has(fieldId - i)) {
       if(! hitShipsBoard.has(fieldId - i))
@@ -603,7 +608,7 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
       break;
   }
 
-  for(let i = 0; i < 33; i += 11) {
+  for(let i = 11; i < 44; i += 11) {
 
     if(shipBoard.has(fieldId + i)) {
       if(! hitShipsBoard.has(fieldId + i))
@@ -616,7 +621,7 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
       break;
   }
 
-  for(let i = 0; i < 33; i += 11) {
+  for(let i = 11; i < 44; i += 11) {
 
     if(shipBoard.has(fieldId - i)) {
       if(! hitShipsBoard.has(fieldId - i))
@@ -629,8 +634,11 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
       break;
   }
 
-  if(sanken == 1)
+  if(sanken == 1) {
     markFieldsAroundShip(sankenShip);
+    console.log(sankenShip);
+    console.log(" ");
+  }
 }
 
 function markFieldsAroundShip(shipLocationSet) {
@@ -669,6 +677,20 @@ function markFieldsAroundShip(shipLocationSet) {
             allFields[elementId + i].setAttribute('class', 'miss');
           }
 
+}
+
+async function checkEndGame() {
+  await sleep(50);
+
+  if(fieldsHitByComputer.size == 20) {
+    alert("You lose");
+    window.location.reload();
+  }
+  
+  if(fieldsHitByPlayer.size == 20) {
+    alert("You win");
+    window.location.reload();
+  }
 }
 
 function sleep(ms) {
