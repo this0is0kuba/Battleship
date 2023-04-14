@@ -8,6 +8,7 @@ const shipSizeList = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 let reservedSpaceByComputer = new Set();
 let computerShipsLocation = new Set();
 let possibleShotsForComputer = new Array();
+let theBestShotsForComputer = new Array();
 
 let playerShipsLocation = new Set();
 
@@ -295,8 +296,6 @@ function startGame(ev) {
   }
 
   randomSetComputerShips();
-  console.log(computerShipsLocation);
-  console.log(" ");
 }
 
 function randomSetComputerShips() {
@@ -550,10 +549,20 @@ function shoot(ev) {
 }
 
 async function computerShot() {
-  let shotDownFieldId = possibleShotsForComputer[Math.floor(Math.random() * possibleShotsForComputer.length)];
+  let shotDownFieldId;
+
+  if(theBestShotsForComputer.length == 0)
+    shotDownFieldId = possibleShotsForComputer[Math.floor(Math.random() * possibleShotsForComputer.length)];
+  else
+    shotDownFieldId = theBestShotsForComputer[Math.floor(Math.random() * theBestShotsForComputer.length)];
 
   const index = possibleShotsForComputer.indexOf(shotDownFieldId);
   possibleShotsForComputer.splice(index, 1);
+
+  if(theBestShotsForComputer.length != 0) {
+    const index2 = theBestShotsForComputer.indexOf(shotDownFieldId);
+    theBestShotsForComputer.splice(index2, 1);
+  }
 
   if(playerShipsLocation.has(shotDownFieldId)) {
     allFields[shotDownFieldId].setAttribute('class', 'cross');
@@ -564,7 +573,7 @@ async function computerShot() {
 
     checkEndGame();
 
-    await sleep(300);
+    await sleep(50);
     computerShot();
   }
 
@@ -634,10 +643,12 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
       break;
   }
 
-  if(sanken == 1) {
+  if(sanken == 1)
     markFieldsAroundShip(sankenShip);
-    console.log(sankenShip);
-    console.log(" ");
+
+  if(sanken == 0) {
+    if(fieldId < 1000)
+      setTheBestShotsForComputer(sankenShip);
   }
 }
 
@@ -691,6 +702,62 @@ async function checkEndGame() {
     alert("You win");
     window.location.reload();
   }
+}
+
+function setTheBestShotsForComputer(shotDownFields) {
+  shotDownFields = Array.from(shotDownFields);
+  theBestShotsForComputer = new Array();
+
+  //first possiblility
+  if(shotDownFields.length == 1)
+    for(let i of [1, -1, 11, -11])
+      if(possibleShotsForComputer.includes(shotDownFields[0] + i))
+        theBestShotsForComputer.push(shotDownFields[0] + i);
+  
+  //second possiblility
+  if(shotDownFields.length == 2) {
+
+    if(Math.abs(shotDownFields[1] - shotDownFields[0]) == 1) {
+
+      if(possibleShotsForComputer.includes(Math.min(...shotDownFields) - 1))
+        theBestShotsForComputer.push(Math.min(...shotDownFields) - 1);
+
+      if(possibleShotsForComputer.includes(Math.max(...shotDownFields) + 1))
+        theBestShotsForComputer.push(Math.max(...shotDownFields) + 1);
+    }
+
+    if(Math.abs(shotDownFields[1] - shotDownFields[0]) == 11) {
+
+      if(possibleShotsForComputer.includes(Math.min(...shotDownFields) - 11))
+        theBestShotsForComputer.push(Math.min(...shotDownFields) - 11);
+
+      if(possibleShotsForComputer.includes(Math.max(...shotDownFields) + 11))
+        theBestShotsForComputer.push(Math.max(...shotDownFields) + 11);
+    }
+  }
+
+  if(shotDownFields.length == 3) {
+
+    if(Math.abs(shotDownFields[1] - shotDownFields[0]) < 11) {
+
+      if(possibleShotsForComputer.includes(Math.min(...shotDownFields) - 1))
+        theBestShotsForComputer.push(Math.min(...shotDownFields) - 1);
+
+      if(possibleShotsForComputer.includes(Math.max(...shotDownFields) + 1))
+        theBestShotsForComputer.push(Math.max(...shotDownFields) + 1);
+    }
+
+    if(Math.abs(shotDownFields[1] - shotDownFields[0]) >= 11) {
+
+      if(possibleShotsForComputer.includes(Math.min(...shotDownFields) - 11))
+        theBestShotsForComputer.push(Math.min(...shotDownFields) - 11);
+
+      if(possibleShotsForComputer.includes(Math.max(...shotDownFields) + 11))
+        theBestShotsForComputer.push(Math.max(...shotDownFields) + 11);
+    }
+  }
+      
+
 }
 
 function sleep(ms) {
