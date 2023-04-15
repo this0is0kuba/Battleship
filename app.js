@@ -553,16 +553,17 @@ async function computerShot() {
 
   if(theBestShotsForComputer.length == 0)
     shotDownFieldId = possibleShotsForComputer[Math.floor(Math.random() * possibleShotsForComputer.length)];
-  else
+    
+
+  else {
     shotDownFieldId = theBestShotsForComputer[Math.floor(Math.random() * theBestShotsForComputer.length)];
+
+    const bestIndex = theBestShotsForComputer.indexOf(shotDownFieldId);
+    theBestShotsForComputer.splice(bestIndex, 1);
+  }
 
   const index = possibleShotsForComputer.indexOf(shotDownFieldId);
   possibleShotsForComputer.splice(index, 1);
-
-  if(theBestShotsForComputer.length != 0) {
-    const index2 = theBestShotsForComputer.indexOf(shotDownFieldId);
-    theBestShotsForComputer.splice(index2, 1);
-  }
 
   if(playerShipsLocation.has(shotDownFieldId)) {
     allFields[shotDownFieldId].setAttribute('class', 'cross');
@@ -643,8 +644,10 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
       break;
   }
 
-  if(sanken == 1)
+  if(sanken == 1) {
     markFieldsAroundShip(sankenShip);
+    theBestShotsForComputer = new Array();
+  }
 
   if(sanken == 0) {
     if(fieldId < 1000)
@@ -756,8 +759,6 @@ function setTheBestShotsForComputer(shotDownFields) {
         theBestShotsForComputer.push(Math.max(...shotDownFields) + 11);
     }
   }
-      
-
 }
 
 function sleep(ms) {
