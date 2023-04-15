@@ -657,9 +657,10 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
 
 function markFieldsAroundShip(shipLocationSet) {
   const iterator = shipLocationSet.values();
+  const value = iterator.next().value;
 
   //we have to check if we are looking on computer board or player board
-  if(iterator.next().value > 1000) 
+  if(value > 1000) 
     for(let elementId of shipLocationSet)
       for(let i of [1, -1, 11, -11, 12, -12, 10, -10])
         if(elementId + i <= 1120)
@@ -675,7 +676,7 @@ function markFieldsAroundShip(shipLocationSet) {
           }
         
   //we have to check if we are looking on computer board or player board
-  if(iterator.next().value < 1000) 
+  if(value < 1000) 
     for(let elementId of shipLocationSet) 
       for(let i of [1, -1, 11, -11, 12, -12, 10, -10])
         if(elementId + i <= 120)
