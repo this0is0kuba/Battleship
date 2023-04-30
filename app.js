@@ -646,7 +646,9 @@ function checkIfShipIsSank(fieldId, shipBoard, hitShipsBoard) {
 
   if(sanken == 1) {
     markFieldsAroundShip(sankenShip);
-    theBestShotsForComputer = new Array();
+
+    if(fieldId < 1000)
+      theBestShotsForComputer = new Array();
   }
 
   if(sanken == 0) {
@@ -760,6 +762,8 @@ function setTheBestShotsForComputer(shotDownFields) {
         theBestShotsForComputer.push(Math.max(...shotDownFields) + 11);
     }
   }
+
+  console.log(theBestShotsForComputer);
 }
 
 function sleep(ms) {
